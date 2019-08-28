@@ -1,11 +1,11 @@
 package envia_resultado;
 
 import java.util.Arrays;
-
 import javax.swing.JOptionPane;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class VerificaStatusServidor implements MqttCallback {
@@ -62,9 +62,22 @@ public class VerificaStatusServidor implements MqttCallback {
 		JOptionPane.showMessageDialog(null, mensagemResultado ,"Resultado",
 				JOptionPane.INFORMATION_MESSAGE);		
 		
+		//Instancia classe para enviar o resultado para Envia_Calculo
+		PublisherEnviarResultado publisherEnviarResultado = 
+				new PublisherEnviarResultado(mensagemResultado);
+		
+		//tratamento para envio de mensagem
+		try {
+			//chama método da classe PublisherEnviarResultado para enviar a mensagem
+			publisherEnviarResultado.enviarMensagemResultado();	
+		}catch(MqttException e) {
+			//imprime exceção no console
+			System.out.println(e);
+		}					
+		
 	}
 	//Chamado quando a entrega de uma mensagem foi concluída e todas as confirmações foram recebidas
-	public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
+	public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {		
 	}		
 
 }
